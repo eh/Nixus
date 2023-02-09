@@ -157,6 +157,7 @@ void binaryAnim(unsigned int y) {
 }
 
 // Select (enable) a digit 1-6, 0 = all off
+// This bring the appropriate pin HIGH
 void selectDigit(unsigned int d) {
   if (d == 1) {
     digitalWrite(Digit1, HIGH);
@@ -211,6 +212,7 @@ void selectDigit(unsigned int d) {
 }
 
 // Display number x to the currently enabled digit
+// Here we send BCD of (0..9) to the K155ID1 (74141)
 void printNix(unsigned int x) {
   if (x == 1) {
     digitalWrite(A0, HIGH);

@@ -157,7 +157,7 @@ void binaryAnim(unsigned int y) {
 }
 
 // Select (enable) a digit 1-6, 0 = all off
-// This bring the appropriate pin HIGH
+// This brings the appropriate pin HIGH
 void selectDigit(unsigned int d) {
   if (d == 1) {
     digitalWrite(Digit1, HIGH);
@@ -212,7 +212,7 @@ void selectDigit(unsigned int d) {
 }
 
 // Display number x to the currently enabled digit
-// Here we send BCD of (0..9) to the K155ID1 (74141)
+// Send BCD of (0..9) to the K155ID1 (74141)
 void printNix(unsigned int x) {
   if (x == 1) {
     digitalWrite(A0, HIGH);
@@ -280,12 +280,12 @@ void printSerial(const char *format, ...) {
 void loop() {
 
   if (digitalRead(BTN_HRS) == LOW) {
-    delay(100);   //prevent over sensitive buttons
+    delay(100);   // prevent over sensitive buttons
   }
 
   if (digitalRead(BTN_HRS) == LOW) {
-    tm.Hour = hour() + 1;           // set the tm structure to 23h31m30s on 13Feb2009
-    tm.Minute = minute();   // increase minute by 1
+    tm.Hour = hour() + 1;       // set the tm structure to 23h31m30s on 13Feb2009
+    tm.Minute = minute();       // increase hour by 1
     tm.Second = second();
     tm.Day = day();
     tm.Month = month();

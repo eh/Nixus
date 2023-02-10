@@ -54,8 +54,8 @@ unsigned int starttime;   // Useful for timers
 unsigned int endtime;
 
 void setup() {
-  Serial.begin(115200);
   if (DEBUG) {
+    Serial.begin(115200);
     Serial.println ("Nixus DEBUG Output");
     delay(1000);
   }

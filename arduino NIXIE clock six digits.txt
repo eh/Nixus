@@ -1,0 +1,342 @@
+
+/*
+   SIX DIGIT NIXIE CLOCK WITH RTC by DOMINIC BUMBACA
+   Dominic@Bumbaca.com
+   cut and paste this into your Arduino IDE anf you should be good to go.
+	
+	Use an ATMEGA328 and make sure the below tow libraries are available..good luck.
+        the jukebox section was for the bulbs to flicker rapidly and randomly for a few seconds every hour, the intent is to prevent cathode poisoning.
+        since this is multiplexed I dont think this is necessary.I have included the loop anyway in case you need an example.
+*/
+
+
+#include <DS3231.h>
+#include <TimeLib.h>
+
+DS3231  rtc(SDA, SCL);
+Time  t;
+
+int m1;
+int m2;
+int h1;
+int h2;
+int s1;
+int s2;
+
+const int HRS = 9;     // the number of the pushbutton pin
+const int MINS = 10;     // the number of the pushbutton pin
+//const int buzz = 2;
+//const int blink = 13;
+
+const int digit1 = 3;
+const int digit2 = 4;
+const int digit3 = 5;
+const int digit4 = 6;
+const int digit5 = 7;
+const int digit6 = 8;
+
+
+void setup() {
+  Serial.begin(115200);
+  Serial.print ("start");
+  //delay(1000);
+
+  rtc.begin();
+  //rtc.setTime(12, 34, 56);
+  t = rtc.getTime();
+
+  setTime((t.hour), (t.min), (t.sec), 1, 1, 2017);
+  //int m2 = t.min / 10;
+  // int m1 = t.min - m2 * 10;
+  //int h2 = t.hour / 10;
+  //int h1 = t.hour - h2 * 10;
+
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
+  pinMode(13, OUTPUT);
+  pinMode(9, INPUT_PULLUP); //
+  pinMode(10, INPUT_PULLUP); //  (now the external pull up resistors are redundant)
+
+  pinMode(A0, OUTPUT); //dont know why but better to address these pins this way...
+  pinMode(A1, OUTPUT);
+  pinMode(A2, OUTPUT);
+  pinMode(A3, OUTPUT);
+
+  // digitalWrite(buzz, HIGH);
+  //delay (250);
+  //digitalWrite(buzz, LOW);
+
+}
+
+void jukebox(int y) {
+  m2 = random(9);
+  m1 = random(9);
+  h2 = random(9);
+  h1 = random(9);
+  h2 = random(9);
+  s1 = random(9);
+  s2 = random(9);
+  digitalWrite(digit1, HIGH);
+  printnix(m1);
+  delay(5);
+  digitalWrite(digit1, LOW);
+  delay(5);
+
+  digitalWrite(digit2, HIGH);
+  printnix(m2);
+  delay(5);
+  digitalWrite(digit2, LOW);
+  delay(5);
+
+
+  digitalWrite(digit3, HIGH);
+  printnix(h1);
+  delay(5);
+  digitalWrite(digit3, LOW);
+  delay(5);
+
+
+  digitalWrite(digit4, HIGH);
+  printnix(h2);
+  delay(5);
+  digitalWrite(digit4, LOW);
+  delay(5);
+
+  digitalWrite(digit5, HIGH);
+  printnix(h2);
+  delay(5);
+  digitalWrite(digit5, LOW);
+  delay(5);
+
+  digitalWrite(digit6, HIGH);
+  printnix(h2);
+  delay(5);
+  digitalWrite(digit6, LOW);
+  delay(5);
+}
+
+
+void selectdigit1() {
+  digitalWrite(digit1, HIGH); //delay(2);
+  digitalWrite(digit2, LOW); //delay(2);
+  digitalWrite(digit3, LOW); //delay(2);
+  digitalWrite(digit4, LOW); //delay(2);
+  digitalWrite(digit5, LOW); //delay(2);
+  digitalWrite(digit6, LOW); //delay(2);
+}
+
+void selectdigit2() {
+  digitalWrite(digit1, LOW); //delay(2);
+  digitalWrite(digit2, HIGH); //delay(2);
+  digitalWrite(digit3, LOW); //delay(2);
+  digitalWrite(digit4, LOW); //delay(2);
+  digitalWrite(digit5, LOW); //delay(2);
+  digitalWrite(digit6, LOW); //delay(2);
+}
+
+void selectdigit3() {
+  digitalWrite(digit1, LOW); //delay(2);
+  digitalWrite(digit2, LOW); //delay(2);
+  digitalWrite(digit3, HIGH); //delay(2);
+  digitalWrite(digit4, LOW); //delay(2);
+  digitalWrite(digit5, LOW); //delay(2);
+  digitalWrite(digit6, LOW); //delay(2);
+}
+
+void selectdigit4() {
+  digitalWrite(digit1, LOW); //delay(2);
+  digitalWrite(digit2, LOW); //delay(2);
+  digitalWrite(digit3, LOW); //delay(2);
+  digitalWrite(digit4, HIGH); //delay(2);
+  digitalWrite(digit5, LOW); //delay(2);
+  digitalWrite(digit6, LOW); //delay(2);
+}
+
+void selectdigit5() {
+  digitalWrite(digit1, LOW); //delay(2);
+  digitalWrite(digit2, LOW); //delay(2);
+  digitalWrite(digit3, LOW); //delay(2);
+  digitalWrite(digit4, LOW); //delay(2);
+  digitalWrite(digit3, HIGH); //delay(2);
+  digitalWrite(digit4, LOW); //delay(2);
+}
+void selectdigit6() {
+  digitalWrite(digit1, LOW); //delay(2);
+  digitalWrite(digit2, LOW); //delay(2);
+  digitalWrite(digit3, LOW); //delay(2);
+  digitalWrite(digit4, LOW); //delay(2);
+  digitalWrite(digit3, LOW); //delay(2);
+  digitalWrite(digit4, HIGH); //delay(2);
+}
+
+void printnix(int x) {
+
+  if (x == 1) {
+
+    digitalWrite(A0, HIGH); //delay(2);
+    digitalWrite(A1, LOW); //delay(2);
+    digitalWrite(A2, LOW); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+
+  if (x == 2) {
+    digitalWrite(A0, LOW); //delay(2);
+    digitalWrite(A1, HIGH); //delay(2);
+    digitalWrite(A2, LOW); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+  if (x == 3) {
+    digitalWrite(A0, HIGH); //delay(2);
+    digitalWrite(A1, HIGH); //delay(2);
+    digitalWrite(A2, LOW); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+  if (x == 4) {
+    digitalWrite(A0, LOW); //delay(2);
+    digitalWrite(A1, LOW); //delay(2);
+    digitalWrite(A2, HIGH); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+  if (x == 5) {
+    digitalWrite(A0, HIGH); //delay(2);
+    digitalWrite(A1, LOW); //delay(2);
+    digitalWrite(A2, HIGH); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+  if (x == 6) {
+    digitalWrite(A0, LOW); //delay(2);
+    digitalWrite(A1, HIGH); //delay(2);
+    digitalWrite(A2, HIGH); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+  if (x == 7) {
+    digitalWrite(A0, HIGH); //delay(2);
+    digitalWrite(A1, HIGH); //delay(2);
+    digitalWrite(A2, HIGH); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+  if (x == 8) {
+    digitalWrite(A0, LOW); //delay(2);
+    digitalWrite(A1, LOW); //delay(2);
+    digitalWrite(A2, LOW);//delay(2);
+    digitalWrite(A3, HIGH); //delay(2);
+    delay (3);
+  }
+
+  if (x == 9) {
+    digitalWrite(A0, HIGH); //delay(2);
+    digitalWrite(A1, LOW); //delay(2);
+    digitalWrite(A2, LOW); //delay(2);
+    digitalWrite(A3, HIGH); //delay(2);
+    delay (3);
+  }
+
+  if (x == 0) {
+    digitalWrite(A0, LOW); //delay(2);
+    digitalWrite(A1, LOW); //delay(2);
+    digitalWrite(A2, LOW); //delay(2);
+    digitalWrite(A3, LOW); //delay(2);
+    delay (3);
+  }
+
+}
+
+void loop() {
+
+
+
+  if (digitalRead(HRS) == LOW) {
+    delay(100);   //prevent over sensitive buttons
+  }
+
+  if (digitalRead(HRS) == LOW) {
+    setTime((hour() + 1), minute(), second(), day(), month(), year());
+    rtc.setTime(hour(), minute(), second());
+    delay(200);
+  }
+
+  if (digitalRead(MINS) == LOW) {
+    delay(100);//prevent over sensitive buttons
+  }
+
+  if (digitalRead(MINS) == LOW) {
+    setTime(hour(), minute() + 1, 00, day(), month(), year());
+    rtc.setTime(hour(), minute(), second());
+    delay(200);
+  }
+
+
+  s1 = second() / 10;
+  s2 = second() - s1 * 10;
+
+  m1 = minute() / 10;
+  m2 = minute() - m1 * 10;
+  h1 = hour() / 10;
+  h2 = hour() - h1 * 10;
+
+  digitalWrite(digit1, HIGH);
+  printnix(h1);
+  digitalWrite(digit1, LOW);
+
+  digitalWrite(digit2, HIGH);
+  printnix(h2);
+  digitalWrite(digit2, LOW);
+
+  digitalWrite(digit3, HIGH);
+  printnix(m1);
+  digitalWrite(digit3, LOW);
+
+  digitalWrite(digit4, HIGH);
+  printnix(m2);
+  digitalWrite(digit4, LOW);
+
+  digitalWrite(digit5, HIGH);
+  printnix(s1);
+  digitalWrite(digit5, LOW);
+
+  digitalWrite(digit6, HIGH);
+  printnix(s2);
+  digitalWrite(digit6, LOW);
+
+
+
+  if ( (second() % 2) == 0) {
+    digitalWrite(13, LOW);
+  }
+
+  if ( (second() % 2) != 0) {
+    digitalWrite(13, HIGH);
+  }
+
+
+  /*Serial.print (hour());
+    Serial.print (":");
+    Serial.print (minute());
+    Serial.print (":");
+    Serial.print (second());
+    Serial.println ();*/
+
+
+}
+
+
+

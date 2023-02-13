@@ -17,9 +17,9 @@
 bool DEBUG = 0;
 
 // Global delay (brightness/flicker)
-unsigned int dispDelay = 3;
+int dispDelay = 3;
 // Slow down animations
-unsigned int animDelay = 6;
+int animDelay = 6;
 
 // Set to 0 for 24hr (not implemented)
 bool AMPM = 1;
@@ -29,31 +29,31 @@ DS3232RTC NixRTC;
 tmElements_t tm;
 time_t t;
 
-unsigned int T_H1;    // Hour, left digit
-unsigned int T_H2;    // Hour, right digit
-unsigned int T_M1;
-unsigned int T_M2;
-unsigned int T_S1;
-unsigned int T_S2;
+int T_H1;    // Hour, left digit
+int T_H2;    // Hour, right digit
+int T_M1;
+int T_M2;
+int T_S1;
+int T_S2;
 
-unsigned int Hour;
-unsigned int Minute;
-unsigned int Second;
+int Hour;
+int Minute;
+int Second;
 
-const unsigned int BTN_HRS = 9;    // the number of the pushbutton pin
-const unsigned int BTN_MNS = 10;   // the number of the pushbutton pin
-//const unsigned int buzz = 2;
-//const unsigned int blink = 13;
+const int BTN_HRS = 9;    // the number of the pushbutton pin
+const int BTN_MNS = 10;   // the number of the pushbutton pin
+//const int buzz = 2;
+//const int blink = 13;
 
-const unsigned int Digit1 = 3;     // Pin for each tube
-const unsigned int Digit2 = 4;
-const unsigned int Digit3 = 5;
-const unsigned int Digit4 = 6;
-const unsigned int Digit5 = 7;
-const unsigned int Digit6 = 8;
+const int Digit1 = 3;     // Pin for each tube
+const int Digit2 = 4;
+const int Digit3 = 5;
+const int Digit4 = 6;
+const int Digit5 = 7;
+const int Digit6 = 8;
 
-unsigned int starttime;   // Useful for timers
-unsigned int endtime;
+int starttime;   // Useful for timers
+int endtime;
 
 void setup() {
   if (DEBUG) {
@@ -90,24 +90,22 @@ void setup() {
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
   delay(250);
-  countdownAnim(4);
-  delay(250);
-  jukeboxAnim(4);
-  delay(250);
-  binaryAnim(4);
-  delay(250);
+  jukeboxAnim(8);   delay(250);
+  binaryAnim(8);    delay(250);
+  countdownAnim(3); delay(250);
   if (DEBUG) { Serial.println("Complete"); }
+
   if (DEBUG) { Serial.println("Clock running"); }
 
 }
 
 // Count down from 9 to 0 y times, from left-to-right
-void countdownAnim(unsigned int y) {
+void countdownAnim(int y) {
   if (DEBUG) { Serial.print("Countdown "); }
-  for (unsigned int animCount = 1; animCount <= y; animCount++) {
-    for (unsigned int digSel = 1; digSel <= 6; digSel++) {
+  for (int animCount = 1; animCount <= y; animCount++) {
+    for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
-      for (unsigned int cDown = 9; cDown >= 1; cDown--) {
+      for (int cDown = 9; cDown >= 0; cDown--) {
         printNix(cDown);
         delay(animDelay);
       }
@@ -116,9 +114,9 @@ void countdownAnim(unsigned int y) {
 }
 
 // Jukebox animation, repeat y times
-void jukeboxAnim(unsigned int y) {
+void jukeboxAnim(int y) {
   if (DEBUG) {Serial.print("Jukebox "); }
-  for (unsigned int jukeCount = 1; jukeCount <= y; jukeCount++) {
+  for (int jukeCount = 1; jukeCount <= y; jukeCount++) {
     T_M2 = random(9); T_M1 = random(9);
     T_H2 = random(9); T_H1 = random(9);
     T_S2 = random(9); T_S1 = random(9);
@@ -135,9 +133,9 @@ void jukeboxAnim(unsigned int y) {
 }
 
 // Toggling binary, repeat y times
-void binaryAnim(unsigned int y) {
+void binaryAnim(int y) {
   if (DEBUG) { Serial.print("Binary "); }
-  for (unsigned int binCount = 1; binCount <= y; binCount++) {
+  for (int binCount = 1; binCount <= y; binCount++) {
     starttime = millis();
     endtime = starttime;
     while ((endtime - starttime) <=250) {
@@ -165,7 +163,7 @@ void binaryAnim(unsigned int y) {
 
 // Select (enable) a digit 1-6, 0 = all off
 // This brings the appropriate pin HIGH
-void selectDigit(unsigned int d) {
+void selectDigit(int d) {
   if (d == 1) {
     digitalWrite(Digit1, HIGH);
     digitalWrite(Digit2, LOW);
@@ -220,7 +218,7 @@ void selectDigit(unsigned int d) {
 
 // Display number x to the currently enabled digit
 // Send BCD of (0..9) to the K155ID1 (74141)
-void printNix(unsigned int x) {
+void printNix(int x) {
   if (x == 1) {
     digitalWrite(A0, HIGH);
     digitalWrite(A1, LOW);

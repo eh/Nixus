@@ -18,6 +18,8 @@ bool DEBUG = 0;
 
 // Global delay (brightness/flicker)
 unsigned int dispDelay = 3;
+// Slow down animations
+unsigned int animDelay = 6;
 
 // Set to 0 for 24hr (not implemented)
 bool AMPM = 1;
@@ -87,10 +89,15 @@ void setup() {
   selectDigit(0); // Turn off all 6 tubes (0 = default = all off)
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
+  delay(250);
   countdownAnim(4);
+  delay(250);
   jukeboxAnim(4);
+  delay(250);
   binaryAnim(4);
+  delay(250);
   if (DEBUG) { Serial.println("Complete"); }
+  if (DEBUG) { Serial.println("Clock running"); }
 
 }
 
@@ -100,9 +107,9 @@ void countdownAnim(unsigned int y) {
   for (unsigned int animCount = 1; animCount <= y; animCount++) {
     for (unsigned int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
-      for (unsigned int cDown = 9; cDown >= 0; cDown--) {
+      for (unsigned int cDown = 9; cDown >= 1; cDown--) {
         printNix(cDown);
-        delay(6);
+        delay(animDelay);
       }
     }
   }
@@ -116,14 +123,14 @@ void jukeboxAnim(unsigned int y) {
     T_H2 = random(9); T_H1 = random(9);
     T_S2 = random(9); T_S1 = random(9);
 
-    selectDigit(1); printNix(T_M1); delay(dispDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(2); printNix(T_M2); delay(dispDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(1); printNix(T_M1); delay(animDelay); selectDigit(0); delay(animDelay);
+    selectDigit(2); printNix(T_M2); delay(animDelay); selectDigit(0); delay(animDelay);
 
-    selectDigit(3); printNix(T_H1); delay(dispDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(4); printNix(T_H2); delay(dispDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(3); printNix(T_H1); delay(animDelay); selectDigit(0); delay(animDelay);
+    selectDigit(4); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
 
-    selectDigit(5); printNix(T_H2); delay(dispDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(6); printNix(T_H2); delay(dispDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
+    selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
   }
 }
 
@@ -134,23 +141,23 @@ void binaryAnim(unsigned int y) {
     starttime = millis();
     endtime = starttime;
     while ((endtime - starttime) <=250) {
-      selectDigit(1); printNix(1); delay(dispDelay);
-      selectDigit(2); printNix(0); delay(dispDelay);
-      selectDigit(3); printNix(1); delay(dispDelay);
-      selectDigit(4); printNix(0); delay(dispDelay);
-      selectDigit(5); printNix(1); delay(dispDelay);
-      selectDigit(6); printNix(0); delay(dispDelay);
+      selectDigit(1); printNix(1); delay(animDelay);
+      selectDigit(2); printNix(0); delay(animDelay);
+      selectDigit(3); printNix(1); delay(animDelay);
+      selectDigit(4); printNix(0); delay(animDelay);
+      selectDigit(5); printNix(1); delay(animDelay);
+      selectDigit(6); printNix(0); delay(animDelay);
       endtime = millis();
     }
     starttime = millis();
     endtime = starttime;
     while ((endtime - starttime) <=250) {
-      selectDigit(1); printNix(0); delay(dispDelay);
-      selectDigit(2); printNix(1); delay(dispDelay);
-      selectDigit(3); printNix(0); delay(dispDelay);
-      selectDigit(4); printNix(1); delay(dispDelay);
-      selectDigit(5); printNix(0); delay(dispDelay);
-      selectDigit(6); printNix(1); delay(dispDelay);
+      selectDigit(1); printNix(0); delay(animDelay);
+      selectDigit(2); printNix(1); delay(animDelay);
+      selectDigit(3); printNix(0); delay(animDelay);
+      selectDigit(4); printNix(1); delay(animDelay);
+      selectDigit(5); printNix(0); delay(animDelay);
+      selectDigit(6); printNix(1); delay(animDelay);
       endtime = millis();
     }
   }
@@ -278,7 +285,7 @@ void printSerial(const char *format, ...) {
 }
 
 void loop() {
-
+  // convert these to while loops
   if (digitalRead(BTN_HRS) == LOW) {
     delay(100);   // prevent over sensitive buttons
   }

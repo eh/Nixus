@@ -40,8 +40,8 @@ int Hour;
 int Minute;
 int Second;
 
-const int BTN_HRS = 9;    // the number of the pushbutton pin
-const int BTN_MNS = 10;   // the number of the pushbutton pin
+const int buttonHours = 9;    // the number of the pushbutton pin
+const int buttonMins = 10;   // the number of the pushbutton pin
 //const int buzz = 2;
 //const int blink = 13;
 
@@ -284,11 +284,11 @@ void printSerial(const char *format, ...) {
 
 void loop() {
   // convert these to while loops
-  if (digitalRead(BTN_HRS) == LOW) {
+  if (digitalRead(buttonHours) == LOW) {
     delay(100);   // prevent over sensitive buttons
   }
 
-  if (digitalRead(BTN_HRS) == LOW) {
+  if (digitalRead(buttonHours) == LOW) {
     tm.Hour = hour() + 1;       // set the tm structure to 23h31m30s on 13Feb2009
     tm.Minute = minute();       // increase hour by 1
     tm.Second = second();
@@ -300,11 +300,11 @@ void loop() {
     delay(200);
   }
 
-  if (digitalRead(BTN_MNS) == LOW) {
+  if (digitalRead(buttonMins) == LOW) {
     delay(100);//prevent over sensitive buttons
   }
 
-  if (digitalRead(BTN_MNS) == LOW) {
+  if (digitalRead(buttonMins) == LOW) {
     tm.Hour = hour();           // set the tm structure to 23h31m30s on 13Feb2009
     tm.Minute = minute() + 1;   // increase minute by 1
     tm.Second = second();

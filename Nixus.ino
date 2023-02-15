@@ -52,8 +52,8 @@ const int Digit4 = 6;
 const int Digit5 = 7;
 const int Digit6 = 8;
 
-int starttime;   // Useful for timers
-int endtime;
+unsigned long starttime;   // Useful for timers
+unsigned long endtime;
 
 void setup() {
   if (DEBUG) {
@@ -111,6 +111,7 @@ void countdownAnim(int y) {
       }
     }
   }
+  selectDigit(0);
 }
 
 // Jukebox animation, repeat y times
@@ -130,6 +131,7 @@ void jukeboxAnim(int y) {
     selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
     selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
   }
+  selectDigit(0);
 }
 
 // Toggling binary, repeat y times
@@ -159,11 +161,12 @@ void binaryAnim(int y) {
       endtime = millis();
     }
   }
+  selectDigit(0);
 }
 
 // Select (enable) a digit 1-6, 0 = all off
-// This brings the appropriate pin HIGH
 void selectDigit(int d) {
+  // This brings the appropriate pin HIGH
   if (d == 1) {
     digitalWrite(Digit1, HIGH);
     digitalWrite(Digit2, LOW);
@@ -217,8 +220,8 @@ void selectDigit(int d) {
 }
 
 // Display number x to the currently enabled digit
-// Send BCD of (0..9) to the K155ID1 (74141)
 void printNix(int x) {
+  // Send BCD of (0..9) to the K155ID1 (74141)
   if (x == 1) {
     digitalWrite(A0, HIGH);
     digitalWrite(A1, LOW);
@@ -272,7 +275,7 @@ void printNix(int x) {
   }
 }
 
-// Serial.printf()
+// Behaves like Serial.printf()
 void printSerial(const char *format, ...) {
     char buffer[512];
     va_list args;

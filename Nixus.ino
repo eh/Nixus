@@ -26,8 +26,7 @@ bool AMPM = 1;
 
 #include <DS3232RTC.h>
 DS3232RTC NixRTC;
-tmElements_t tm;
-time_t t;
+tmElements_t NixTime;
 
 int T_H1;    // Hour, left digit
 int T_H2;    // Hour, right digit
@@ -286,13 +285,13 @@ void loop() {
   }
 
   if (digitalRead(buttonHours) == LOW) {
-    tm.Hour = hour() + 1;       // set the tm structure to 23h31m30s on 13Feb2009
-    tm.Minute = minute();       // increase hour by 1
-    tm.Second = second();
-    tm.Day = day();
-    tm.Month = month();
-    tm.Year = year();
-    setTime(tm.Hour, tm.Minute, tm.Second, tm.Day, tm.Month, tm.Year);
+    NixTime.Hour = hour() + 1;       // set the tm structure to 23h31m30s on 13Feb2009
+    NixTime.Minute = minute();       // increase hour by 1
+    NixTime.Second = second();
+    NixTime.Day = day();
+    NixTime.Month = month();
+    NixTime.Year = year();
+    setTime(NixTime.Hour, NixTime.Minute, NixTime.Second, NixTime.Day, NixTime.Month, NixTime.Year);
     NixRTC.set(now());
     delay(200);
   }
@@ -302,13 +301,13 @@ void loop() {
   }
 
   if (digitalRead(buttonMins) == LOW) {
-    tm.Hour = hour();           // set the tm structure to 23h31m30s on 13Feb2009
-    tm.Minute = minute() + 1;   // increase minute by 1
-    tm.Second = second();
-    tm.Day = day();
-    tm.Month = month();
-    tm.Year = year();
-    setTime(tm.Hour, tm.Minute, tm.Second, tm.Day, tm.Month, tm.Year);
+    NixTime.Hour = hour();           // set the tm structure to 23h31m30s on 13Feb2009
+    NixTime.Minute = minute() + 1;   // increase minute by 1
+    NixTime.Second = second();
+    NixTime.Day = day();
+    NixTime.Month = month();
+    NixTime.Year = year();
+    setTime(NixTime.Hour, NixTime.Minute, NixTime.Second, NixTime.Day, NixTime.Month, NixTime.Year);
     NixRTC.set(now());
     delay(200);
   }

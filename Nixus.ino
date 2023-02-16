@@ -86,13 +86,15 @@ void setup() {
   pinMode(A2, OUTPUT);
   pinMode(A3, OUTPUT);
 
+  randomSeed(millis());  // Initialize PRNG
+
   selectDigit(0); // Turn off all 6 tubes (0 = default = all off)
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
   delay(250);
-  jukeboxAnim(8);   delay(250);
-  binaryAnim(8);    delay(250);
-  countdownAnim(3); delay(250);
+  jukeboxAnim(8);
+  binaryAnim(8);
+  countdownAnim(3);
   if (DEBUG) { Serial.println("Complete"); }
 
   if (DEBUG) { Serial.println("Clock running"); }
@@ -111,7 +113,8 @@ void countdownAnim(int y) {
       }
     }
   }
-  selectDigit(0);
+  selectDigit(0);  // Clear display
+  delay(250);  
 }
 
 // Jukebox animation, repeat y times
@@ -131,37 +134,28 @@ void jukeboxAnim(int y) {
     selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
     selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
   }
-  selectDigit(0);
+  selectDigit(0); // Clear display
+  delay(250);
 }
 
-// Toggling binary, repeat y times
+// Random binary, repeat y times
 void binaryAnim(int y) {
   if (DEBUG) { Serial.print("Binary "); }
   for (int binCount = 1; binCount <= y; binCount++) {
     starttime = millis();
     endtime = starttime;
     while ((endtime - starttime) <=250) {
-      selectDigit(1); printNix(1); delay(animDelay);
-      selectDigit(2); printNix(0); delay(animDelay);
-      selectDigit(3); printNix(1); delay(animDelay);
-      selectDigit(4); printNix(0); delay(animDelay);
-      selectDigit(5); printNix(1); delay(animDelay);
-      selectDigit(6); printNix(0); delay(animDelay);
-      endtime = millis();
-    }
-    starttime = millis();
-    endtime = starttime;
-    while ((endtime - starttime) <=250) {
-      selectDigit(1); printNix(0); delay(animDelay);
-      selectDigit(2); printNix(1); delay(animDelay);
-      selectDigit(3); printNix(0); delay(animDelay);
-      selectDigit(4); printNix(1); delay(animDelay);
-      selectDigit(5); printNix(0); delay(animDelay);
-      selectDigit(6); printNix(1); delay(animDelay);
+      selectDigit(1); printNix(random(0,2)); delay(animDelay);
+      selectDigit(2); printNix(random(0,2)); delay(animDelay);
+      selectDigit(3); printNix(random(0,2)); delay(animDelay);
+      selectDigit(4); printNix(random(0,2)); delay(animDelay);
+      selectDigit(5); printNix(random(0,2)); delay(animDelay);
+      selectDigit(6); printNix(random(0,2)); delay(animDelay);
       endtime = millis();
     }
   }
-  selectDigit(0);
+  selectDigit(0); // Clear display
+  delay(250);
 }
 
 // Select (enable) a digit 1-6, 0 = all off

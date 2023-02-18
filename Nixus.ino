@@ -300,8 +300,8 @@ void loop() {
   }
 
   if (digitalRead(buttonHours) == LOW) {
-    NixTime.Hour = hour() + 1;       // set the tm structure to 23h31m30s on 13Feb2009
-    NixTime.Minute = minute();       // increase hour by 1
+    NixTime.Hour = hour() + 1;       // increase hour by 1
+    NixTime.Minute = minute();
     NixTime.Second = second();
     NixTime.Day = day();
     NixTime.Month = month();
@@ -316,7 +316,7 @@ void loop() {
   }
 
   if (digitalRead(buttonMins) == LOW) {
-    NixTime.Hour = hour();           // set the tm structure to 23h31m30s on 13Feb2009
+    NixTime.Hour = hour();
     NixTime.Minute = minute() + 1;   // increase minute by 1
     NixTime.Second = second();
     NixTime.Day = day();

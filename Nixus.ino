@@ -19,13 +19,13 @@ bool DEBUG = 0;
 
 // Play a random animation at the top of the hour
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-int hourlyAnim = 1;
+int hourlyAnim = 2;
 
 // Global delay (brightness/flicker)
 int dispDelay = 2;
 
 // Slow down animations
-int animDelay = 6;
+int animDelay = 10;
 
 // Set to 0 for 24hr (not implemented)
 bool AMPM = 1;
@@ -97,9 +97,9 @@ void setup() {
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
   delay(250);
-  jukeboxAnim(8);
-  binaryAnim(8);
-  countdownAnim(3);
+  jukeboxAnim(10);
+  binaryAnim(4);
+  countdownAnim(4);
   if (DEBUG) { Serial.println("Complete"); }
 
   if (DEBUG) { Serial.println("Clock running"); }
@@ -117,6 +117,7 @@ void animRandom() {
 
 // Count down from 9 to 0 y times, from left-to-right
 void countdownAnim(int y) {
+  // TODO this should go 999999 899999 799999 .. 099999 089999 .. 000000
   if (DEBUG) { Serial.print("Countdown "); }
   for (int animCount = 1; animCount <= y; animCount++) {
     for (int digSel = 1; digSel <= 6; digSel++) {
@@ -139,14 +140,14 @@ void jukeboxAnim(int y) {
     T_H2 = random(0,10); T_H1 = random(0,10);
     T_S2 = random(0,10); T_S1 = random(0,10);
 
-    selectDigit(1); printNix(T_M1); delay(animDelay); selectDigit(0); delay(animDelay);
-    selectDigit(2); printNix(T_M2); delay(animDelay); selectDigit(0); delay(animDelay);
+    selectDigit(1); printNix(T_M1); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(2); printNix(T_M2); delay(animDelay); selectDigit(0); delay(dispDelay);
 
-    selectDigit(3); printNix(T_H1); delay(animDelay); selectDigit(0); delay(animDelay);
-    selectDigit(4); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
+    selectDigit(3); printNix(T_H1); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(4); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
 
-    selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
-    selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(animDelay);
+    selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
   }
   selectDigit(0); // Clear display
   delay(250);
@@ -158,7 +159,7 @@ void binaryAnim(int y) {
   for (int binCount = 1; binCount <= y; binCount++) {
     starttime = millis();
     endtime = starttime;
-    while ((endtime - starttime) <=250) {
+    while ((endtime - starttime) <=500) {
       selectDigit(1); printNix(random(0,2)); delay(animDelay);
       selectDigit(2); printNix(random(0,2)); delay(animDelay);
       selectDigit(3); printNix(random(0,2)); delay(animDelay);
@@ -359,11 +360,13 @@ void loop() {
   selectDigit(5); printNix(T_S1); delay(dispDelay);
   selectDigit(6); printNix(T_S2); delay(dispDelay);
 
-  // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-  if ((hourlyAnim == 1) && (Minute == 0)) { animRandom(); }
-  if ((hourlyAnim == 2) && (Minute == 0)) { jukeboxAnim(8); }
-  if ((hourlyAnim == 3) && (Minute == 0)) { binaryAnim(8); }
-  if ((hourlyAnim == 4) && (Minute == 0)) { countdownAnim(3); }
+  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
+    // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
+    if (hourlyAnim == 1) { animRandom(); }
+    if (hourlyAnim == 2) { jukeboxAnim(8); }
+    if (hourlyAnim == 3) { binaryAnim(8); }
+    if (hourlyAnim == 4) { countdownAnim(3); }
+  }
 
   // blink
   if ((second() % 2) == 0) { digitalWrite(13, LOW); }

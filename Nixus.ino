@@ -10,8 +10,9 @@
 
 /*
   Switch to DS3232 library, general clean-up, additional features.
-  todo: 12/24hr, ext brightness, blink toggle, are there any avail gpio? better debounce
+  todo: ext 12/24hr, ext brightness, ext blink toggle, better debounce
   blink type (off, 1x1sec, 2x1sec, heartbeat, ?) 
+  available gpio: 2, 3, 17, 18
 */
 
 // Enable for DEBUG info on serial
@@ -47,8 +48,6 @@ int Second;
 
 const int buttonHours = 9;    // the number of the pushbutton pin
 const int buttonMins = 10;   // the number of the pushbutton pin
-//const int buzz = 2;
-//const int blink = 13;
 
 const int Digit1 = 3;     // Pin for each tube
 const int Digit2 = 4;
@@ -117,7 +116,6 @@ void animRandom() {
 
 // Count down from 9 to 0 y times, from left-to-right
 void countdownAnim(int y) {
-  // TODO this should go 999999 899999 799999 .. 099999 089999 .. 000000
   if (DEBUG) { Serial.print("Countdown "); }
   for (int animCount = 1; animCount <= y; animCount++) {
     for (int digSel = 1; digSel <= 6; digSel++) {
@@ -329,8 +327,8 @@ void loop() {
   }
 
   Hour = hour();
-  if (Hour > 12) {    // Hour is 24hr
-    Hour = Hour - 12; // now Hour is 12hr
+  if (Hour > 12) {
+    Hour = Hour - 12;
   }
   if (Hour > 9) {
     T_H1 = 1;

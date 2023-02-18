@@ -11,13 +11,19 @@
 /*
   Switch to DS3232 library, general clean-up, additional features.
   todo: 12/24hr, ext brightness, blink toggle, are there any avail gpio? better debounce
+  blink type (off, 1x1sec, 2x1sec, heartbeat, ?) 
 */
 
 // Enable for DEBUG info on serial
 bool DEBUG = 0;
 
+// Play a random animation at the top of the hour
+// 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
+int hourlyAnim = 1;
+
 // Global delay (brightness/flicker)
-int dispDelay = 3;
+int dispDelay = 2;
+
 // Slow down animations
 int animDelay = 6;
 
@@ -100,6 +106,15 @@ void setup() {
 
 }
 
+// Play a random animation
+void animRandom() {
+  if (DEBUG) { Serial.println("Playing random animation"); }
+  int y = random(1,4);
+  if (y == 1) { jukeboxAnim(8); }
+  if (y == 2) { binaryAnim(8); }
+  if (y == 3) { countdownAnim(3); }
+}
+
 // Count down from 9 to 0 y times, from left-to-right
 void countdownAnim(int y) {
   if (DEBUG) { Serial.print("Countdown "); }
@@ -120,9 +135,9 @@ void countdownAnim(int y) {
 void jukeboxAnim(int y) {
   if (DEBUG) {Serial.print("Jukebox "); }
   for (int jukeCount = 1; jukeCount <= y; jukeCount++) {
-    T_M2 = random(9); T_M1 = random(9);
-    T_H2 = random(9); T_H1 = random(9);
-    T_S2 = random(9); T_S1 = random(9);
+    T_M2 = random(0,10); T_M1 = random(0,10);
+    T_H2 = random(0,10); T_H1 = random(0,10);
+    T_S2 = random(0,10); T_S1 = random(0,10);
 
     selectDigit(1); printNix(T_M1); delay(animDelay); selectDigit(0); delay(animDelay);
     selectDigit(2); printNix(T_M2); delay(animDelay); selectDigit(0); delay(animDelay);
@@ -344,12 +359,13 @@ void loop() {
   selectDigit(5); printNix(T_S1); delay(dispDelay);
   selectDigit(6); printNix(T_S2); delay(dispDelay);
 
-  if ( (second() % 2) == 0) {
-    digitalWrite(13, LOW);
-  }
+  // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
+  if ((hourlyAnim == 1) && (Minute == 0)) { animRandom(); }
+  if ((hourlyAnim == 2) && (Minute == 0)) { jukeboxAnim(8); }
+  if ((hourlyAnim == 3) && (Minute == 0)) { binaryAnim(8); }
+  if ((hourlyAnim == 4) && (Minute == 0)) { countdownAnim(3); }
 
-  if ( (second() % 2) != 0) {
-    digitalWrite(13, HIGH);
-  }
-
+  // blink
+  if ((second() % 2) == 0) { digitalWrite(13, LOW); }
+  if ((second() % 2) != 0) { digitalWrite(13, HIGH); }
 }

@@ -22,6 +22,9 @@ bool DEBUG = 0;
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
 int hourlyAnim = 2;
 
+// Animation time in ms
+int animTime = 500;
+
 // Global delay (brightness/flicker)
 int dispDelay = 2;
 
@@ -93,12 +96,12 @@ void setup() {
   randomSeed(millis());  // Initialize PRNG
 
   selectDigit(0); // Turn off all 6 tubes (0 = default = all off)
+  delay(1000); // Tube warm-up (not really needed)
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
-  delay(250);
-  jukeboxAnim(10);
-  binaryAnim(4);
-  countdownAnim(4);
+  jukeboxAnim(animTime);
+  binaryAnim(animTime);
+  countdownAnim(animTime);
   if (DEBUG) { Serial.println("Complete"); }
 
   if (DEBUG) { Serial.println("Clock running"); }
@@ -109,15 +112,17 @@ void setup() {
 void animRandom() {
   if (DEBUG) { Serial.println("Playing random animation"); }
   int y = random(1,4);
-  if (y == 1) { jukeboxAnim(8); }
-  if (y == 2) { binaryAnim(8); }
-  if (y == 3) { countdownAnim(3); }
+  if (y == 1) { jukeboxAnim(animTime); }
+  if (y == 2) { binaryAnim(animTime); }
+  if (y == 3) { countdownAnim(animTime); }
 }
 
-// Count down from 9 to 0 y times, from left-to-right
+// Count down from 9 to 0, left-to-right, for y ms
 void countdownAnim(int y) {
   if (DEBUG) { Serial.print("Countdown "); }
-  for (int animCount = 1; animCount <= y; animCount++) {
+  starttime = millis();
+  endtime = starttime;
+  while ((endtime - starttime) <= y) {  
     for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
       for (int cDown = 9; cDown >= 0; cDown--) {
@@ -130,10 +135,12 @@ void countdownAnim(int y) {
   delay(250);  
 }
 
-// Jukebox animation, repeat y times
+// Jukebox animation, cycle for y ms
 void jukeboxAnim(int y) {
   if (DEBUG) {Serial.print("Jukebox "); }
-  for (int jukeCount = 1; jukeCount <= y; jukeCount++) {
+  starttime = millis();
+  endtime = starttime;
+  while ((endtime - starttime) <= y) {  
     T_M2 = random(0,10); T_M1 = random(0,10);
     T_H2 = random(0,10); T_H1 = random(0,10);
     T_S2 = random(0,10); T_S1 = random(0,10);
@@ -151,21 +158,19 @@ void jukeboxAnim(int y) {
   delay(250);
 }
 
-// Random binary, repeat y times
+// Random binary, cycle for y ms
 void binaryAnim(int y) {
   if (DEBUG) { Serial.print("Binary "); }
-  for (int binCount = 1; binCount <= y; binCount++) {
-    starttime = millis();
-    endtime = starttime;
-    while ((endtime - starttime) <=500) {
-      selectDigit(1); printNix(random(0,2)); delay(animDelay);
-      selectDigit(2); printNix(random(0,2)); delay(animDelay);
-      selectDigit(3); printNix(random(0,2)); delay(animDelay);
-      selectDigit(4); printNix(random(0,2)); delay(animDelay);
-      selectDigit(5); printNix(random(0,2)); delay(animDelay);
-      selectDigit(6); printNix(random(0,2)); delay(animDelay);
-      endtime = millis();
-    }
+  starttime = millis();
+  endtime = starttime;
+  while ((endtime - starttime) <= y) {
+    selectDigit(1); printNix(random(0,2)); delay(animDelay);
+    selectDigit(2); printNix(random(0,2)); delay(animDelay);
+    selectDigit(3); printNix(random(0,2)); delay(animDelay);
+    selectDigit(4); printNix(random(0,2)); delay(animDelay);
+    selectDigit(5); printNix(random(0,2)); delay(animDelay);
+    selectDigit(6); printNix(random(0,2)); delay(animDelay);
+    endtime = millis();
   }
   selectDigit(0); // Clear display
   delay(250);
@@ -361,9 +366,9 @@ void loop() {
   if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
     // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
     if (hourlyAnim == 1) { animRandom(); }
-    if (hourlyAnim == 2) { jukeboxAnim(8); }
-    if (hourlyAnim == 3) { binaryAnim(8); }
-    if (hourlyAnim == 4) { countdownAnim(3); }
+    if (hourlyAnim == 2) { jukeboxAnim(animTime); }
+    if (hourlyAnim == 3) { binaryAnim(animTime); }
+    if (hourlyAnim == 4) { countdownAnim(animTime); }
   }
 
   // blink

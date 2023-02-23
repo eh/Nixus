@@ -20,13 +20,13 @@ bool DEBUG = 0;
 
 // Play a random animation at the top of the hour
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-int hourlyAnim = 2;
+int hourlyAnim = 1;
 
 // Animation time in ms
-int animTime = 500;
+int animTime = 2000;
 
 // Global delay (brightness/flicker)
-int dispDelay = 2;
+int dispDelay = 3;
 
 // Slow down animations
 int animDelay = 10;
@@ -130,6 +130,7 @@ void countdownAnim(int y) {
         delay(animDelay);
       }
     }
+    endtime = millis();
   }
   selectDigit(0);  // Clear display
   delay(250);  
@@ -153,6 +154,7 @@ void jukeboxAnim(int y) {
 
     selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
     selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
+    endtime = millis();
   }
   selectDigit(0); // Clear display
   delay(250);

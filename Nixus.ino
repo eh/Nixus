@@ -126,8 +126,8 @@ void countdownAnim(int y) {
     for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
       for (int cDown = 9; cDown >= 0; cDown--) {
-        printNix(cDown);
-        delay(animDelay);
+        printNix(cDown); delay(animDelay);
+        selectDigit(0); delay(dispDelay);
       }
     }
     endtime = millis();
@@ -166,12 +166,12 @@ void binaryAnim(int y) {
   starttime = millis();
   endtime = starttime;
   while ((endtime - starttime) <= y) {
-    selectDigit(1); printNix(random(0,2)); delay(animDelay);
-    selectDigit(2); printNix(random(0,2)); delay(animDelay);
-    selectDigit(3); printNix(random(0,2)); delay(animDelay);
-    selectDigit(4); printNix(random(0,2)); delay(animDelay);
-    selectDigit(5); printNix(random(0,2)); delay(animDelay);
-    selectDigit(6); printNix(random(0,2)); delay(animDelay);
+    selectDigit(1); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(2); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(3); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(4); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(5); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(6); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
     endtime = millis();
   }
   selectDigit(0); // Clear display

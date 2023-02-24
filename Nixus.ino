@@ -18,6 +18,9 @@
 // Enable for DEBUG info on serial
 bool DEBUG = 0;
 
+// Set to 0 for 24hr
+bool AMPM = 1;
+
 // Play a random animation at the top of the hour
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
 int hourlyAnim = 1;
@@ -31,28 +34,25 @@ int dispDelay = 3;
 // Slow down animations
 int animDelay = 10;
 
-// Set to 0 for 24hr (not implemented)
-bool AMPM = 1;
-
 #include <DS3232RTC.h>
 DS3232RTC NixRTC;
 tmElements_t NixTime;
 
-int T_H1;    // Hour, left digit
-int T_H2;    // Hour, right digit
-int T_M1;
-int T_M2;
-int T_S1;
-int T_S2;
+int T_H1;   // Hour, left digit
+int T_H2;   // Hour, right digit
+int T_M1;   // Minute, left digit
+int T_M2;   // Minute, right digit
+int T_S1;   // Second, left digit
+int T_S2;   // Second, right digit
 
 int Hour;
 int Minute;
 int Second;
 
-const int buttonHours = 9;    // the number of the pushbutton pin
+const int buttonHours = 9;   // the number of the pushbutton pin
 const int buttonMins = 10;   // the number of the pushbutton pin
 
-const int Digit1 = 3;     // Pin for each tube
+const int Digit1 = 3;   // Pin for each tube
 const int Digit2 = 4;
 const int Digit3 = 5;
 const int Digit4 = 6;
@@ -93,10 +93,10 @@ void setup() {
   pinMode(A2, OUTPUT);
   pinMode(A3, OUTPUT);
 
-  randomSeed(millis());  // Initialize PRNG
+  randomSeed(millis());   // Initialize PRNG
 
-  selectDigit(0); // Turn off all 6 tubes (0 = default = all off)
-  delay(1000); // Tube warm-up (not really needed)
+  selectDigit(0);   // Turn off all 6 tubes (0 = default = all off)
+  delay(1000);   // Tube warm-up (not really needed)
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
   jukeboxAnim(animTime);
@@ -337,19 +337,12 @@ void loop() {
   }
 
   Hour = hour();
-  if (Hour > 12) {
-    Hour = Hour - 12;
+  if (AMPM) {
+    if (Hour >= 12) { Hour -= 12; }
+    if (Hour == 0) { Hour = 12; }
   }
-  if (Hour > 9) {
-    T_H1 = 1;
-    T_H2 = Hour - 10;
-  } else if (Hour == 0) {
-    T_H1 = 1;
-    T_H2 = 2;
-  } else {
-    T_H1 = 0;
-    T_H2 = Hour;
-  }
+  T_H2 = Hour % 10;
+  T_H1 = Hour / 10 % 10;
   
   Minute = minute();
   T_M2 = Minute % 10;

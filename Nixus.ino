@@ -16,23 +16,23 @@
 */
 
 // Enable for DEBUG info on serial
-bool DEBUG = 0;
+const bool DEBUG = 0;
 
 // Set to 0 for 24hr
-bool AMPM = 1;
+const bool AMPM = 1;
 
 // Play a random animation at the top of the hour
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-int hourlyAnim = 1;
+const int hourlyAnim = 1;
 
 // Animation time in ms
-int animTime = 2000;
+const int animTime = 2000;
 
 // Global delay (brightness/flicker)
-int dispDelay = 3;
+const int dispDelay = 3;
 
 // Slow down animations
-int animDelay = 10;
+const int animDelay = 10;
 
 #include <DS3232RTC.h>
 DS3232RTC NixRTC;
@@ -49,8 +49,9 @@ int Hour;
 int Minute;
 int Second;
 
-const int buttonHours = 9;   // the number of the pushbutton pin
-const int buttonMins = 10;   // the number of the pushbutton pin
+const int buttonHours = 9;   // the number of the Hours+ pushbutton pin
+const int buttonMins = 10;   // the number of the Minutes+ pushbutton pin
+const int blinkLED = 13;     // the number of the blinking LEDs pin
 
 const int Digit1 = 3;   // Pin for each tube
 const int Digit2 = 4;
@@ -374,6 +375,6 @@ void loop() {
   }
 
   // blink
-  if ((second() % 2) == 0) { digitalWrite(13, LOW); }
-  if ((second() % 2) != 0) { digitalWrite(13, HIGH); }
+  if ((second() % 2) == 0) { digitalWrite(blinkLED, LOW); }
+  if ((second() % 2) != 0) { digitalWrite(blinkLED, HIGH); }
 }

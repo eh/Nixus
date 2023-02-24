@@ -112,9 +112,12 @@ void setup() {
 void animRandom() {
   if (DEBUG) { Serial.println("Playing random animation"); }
   int y = random(1,4);
-  if (y == 1) { jukeboxAnim(animTime); }
-  if (y == 2) { binaryAnim(animTime); }
-  if (y == 3) { countdownAnim(animTime); }
+  switch(y) {
+    case 1: jukeboxAnim(animTime); break;
+    case 2: binaryAnim(animTime); break;
+    case 3: countdownAnim(animTime); break;
+    default: break;
+  }
 }
 
 // Count down from 9 to 0, left-to-right, for y ms
@@ -367,10 +370,14 @@ void loop() {
 
   if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
     // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-    if (hourlyAnim == 1) { animRandom(); }
-    if (hourlyAnim == 2) { jukeboxAnim(animTime); }
-    if (hourlyAnim == 3) { binaryAnim(animTime); }
-    if (hourlyAnim == 4) { countdownAnim(animTime); }
+    switch(hourlyAnim) {
+      case 0: break;
+      case 1: animRandom(); break;
+      case 2: jukeboxAnim(animTime); break;
+      case 3: binaryAnim(animTime); break;
+      case 4: countdownAnim(animTime); break;
+      default: break;
+    }
   }
 
   // blink

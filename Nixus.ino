@@ -62,6 +62,9 @@ const int Digit6 = 8;
 
 unsigned long starttime;   // Useful for timers
 unsigned long endtime;
+unsigned long adjMillis;
+unsigned long prevMillis = 0;
+unsigned long adjTime = 500;    // adjust speed (lower = faster repeat while button held)
 
 void setup() {
   if (DEBUG) {
@@ -108,6 +111,7 @@ void setup() {
   if (DEBUG) { Serial.println("Clock running"); }
 
 }
+
 
 // Play a random animation
 void animRandom() {
@@ -303,14 +307,28 @@ void printSerial(const char *format, ...) {
     va_end(args);
 }
 
-void loop() {
-  // convert these to while loops
-  if (digitalRead(buttonHours) == LOW) {
-    delay(100);   // prevent over sensitive buttons
+// Increase minutes while button held
+void adjMinute() {
+  adjMillis = millis();
+  if (adjMillis - prevMillis >= adjTime) {
+    prevMillis = adjMillis;
+    NixTime.Hour = hour();
+    NixTime.Minute = minute() + 1;
+    NixTime.Second = second();
+    NixTime.Day = day();
+    NixTime.Month = month();
+    NixTime.Year = year();
+    setTime(NixTime.Hour, NixTime.Minute, NixTime.Second, NixTime.Day, NixTime.Month, NixTime.Year);
+    NixRTC.set(now());
   }
+}
 
-  if (digitalRead(buttonHours) == LOW) {
-    NixTime.Hour = hour() + 1;       // increase hour by 1
+// Increase hours while button held
+void adjHour() {
+  adjMillis = millis();
+  if (adjMillis - prevMillis >= adjTime) {
+    prevMillis = adjMillis;
+    NixTime.Hour = hour() + 1;
     NixTime.Minute = minute();
     NixTime.Second = second();
     NixTime.Day = day();
@@ -318,24 +336,13 @@ void loop() {
     NixTime.Year = year();
     setTime(NixTime.Hour, NixTime.Minute, NixTime.Second, NixTime.Day, NixTime.Month, NixTime.Year);
     NixRTC.set(now());
-    delay(200);
   }
+}
 
-  if (digitalRead(buttonMins) == LOW) {
-    delay(100);//prevent over sensitive buttons
-  }
-
-  if (digitalRead(buttonMins) == LOW) {
-    NixTime.Hour = hour();
-    NixTime.Minute = minute() + 1;   // increase minute by 1
-    NixTime.Second = second();
-    NixTime.Day = day();
-    NixTime.Month = month();
-    NixTime.Year = year();
-    setTime(NixTime.Hour, NixTime.Minute, NixTime.Second, NixTime.Day, NixTime.Month, NixTime.Year);
-    NixRTC.set(now());
-    delay(200);
-  }
+void loop() {
+  
+  if (digitalRead(buttonHours) == LOW) { adjHour(); }
+  if (digitalRead(buttonMins) == LOW) { adjMinute(); }
 
   Hour = hour();
   if (AMPM) {

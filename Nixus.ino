@@ -21,18 +21,20 @@ const bool DEBUG = 0;
 // Set to 0 for 24hr
 const bool AMPM = 1;
 
-// Play a random animation at the top of the hour
+// Play a random animation at set times
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-const int hourlyAnim = 1;
+const int animHourly = 1;
+const int animHalfHour = 0;
+const int animMinute = 0;
 
 // Animation time in ms
 const int animTime = 2000;
 
 // Global delay (brightness/flicker)
-const int dispDelay = 3;
+const int delayDisp = 3;
 
 // Slow down animations
-const int animDelay = 10;
+const int delayAnim = 10;
 
 #include <DS3232RTC.h>
 DS3232RTC NixRTC;
@@ -60,8 +62,8 @@ const int Digit4 = 6;
 const int Digit5 = 7;
 const int Digit6 = 8;
 
-unsigned long starttime;   // Useful for timers
-unsigned long endtime;
+unsigned long timeStart;   // Useful for timers
+unsigned long timeEnd;
 
 void setup() {
   if (DEBUG) {
@@ -100,9 +102,9 @@ void setup() {
   delay(1000);   // Tube warm-up (not really needed)
 
   if (DEBUG) { Serial.print("Boot Animations: "); }
-  jukeboxAnim(animTime);
-  binaryAnim(animTime);
-  countdownAnim(animTime);
+  animJukebox(animTime);
+  animBinary(animTime);
+  animCountdown(animTime);
   if (DEBUG) { Serial.println("Complete"); }
 
   if (DEBUG) { Serial.println("Clock running"); }
@@ -114,69 +116,69 @@ void animRandom() {
   if (DEBUG) { Serial.println("Playing random animation"); }
   int y = random(1,4);
   switch(y) {
-    case 1: jukeboxAnim(animTime); break;
-    case 2: binaryAnim(animTime); break;
-    case 3: countdownAnim(animTime); break;
+    case 1: animJukebox(animTime); break;
+    case 2: animBinary(animTime); break;
+    case 3: animCountdown(animTime); break;
     default: break;
   }
 }
 
 // Count down from 9 to 0, left-to-right, for y ms
-void countdownAnim(int y) {
+void animCountdown(int y) {
   if (DEBUG) { Serial.print("Countdown "); }
-  starttime = millis();
-  endtime = starttime;
-  while ((endtime - starttime) <= y) {  
+  timeStart = millis();
+  timeEnd = timeStart;
+  while ((timeEnd - timeStart) <= y) {  
     for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
       for (int cDown = 9; cDown >= 0; cDown--) {
-        printNix(cDown); delay(animDelay);
-        selectDigit(0); delay(dispDelay);
+        printNix(cDown); delay(delayAnim);
+        selectDigit(0); delay(delayDisp);
       }
     }
-    endtime = millis();
+    timeEnd = millis();
   }
   selectDigit(0);  // Clear display
   delay(250);  
 }
 
 // Jukebox animation, cycle for y ms
-void jukeboxAnim(int y) {
+void animJukebox(int y) {
   if (DEBUG) {Serial.print("Jukebox "); }
-  starttime = millis();
-  endtime = starttime;
-  while ((endtime - starttime) <= y) {  
+  timeStart = millis();
+  timeEnd = timeStart;
+  while ((timeEnd - timeStart) <= y) {  
     T_M2 = random(0,10); T_M1 = random(0,10);
     T_H2 = random(0,10); T_H1 = random(0,10);
     T_S2 = random(0,10); T_S1 = random(0,10);
 
-    selectDigit(1); printNix(T_M1); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(2); printNix(T_M2); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(1); printNix(T_M1); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(2); printNix(T_M2); delay(delayAnim); selectDigit(0); delay(delayDisp);
 
-    selectDigit(3); printNix(T_H1); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(4); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
+    selectDigit(3); printNix(T_H1); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(4); printNix(T_H2); delay(delayAnim); selectDigit(0); delay(delayDisp);
 
-    selectDigit(5); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(6); printNix(T_H2); delay(animDelay); selectDigit(0); delay(dispDelay);
-    endtime = millis();
+    selectDigit(5); printNix(T_H2); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(6); printNix(T_H2); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    timeEnd = millis();
   }
   selectDigit(0); // Clear display
   delay(250);
 }
 
 // Random binary, cycle for y ms
-void binaryAnim(int y) {
+void animBinary(int y) {
   if (DEBUG) { Serial.print("Binary "); }
-  starttime = millis();
-  endtime = starttime;
-  while ((endtime - starttime) <= y) {
-    selectDigit(1); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(2); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(3); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(4); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(5); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
-    selectDigit(6); printNix(random(0,2)); delay(animDelay); selectDigit(0); delay(dispDelay);
-    endtime = millis();
+  timeStart = millis();
+  timeEnd = timeStart;
+  while ((timeEnd - timeStart) <= y) {
+    selectDigit(1); printNix(random(0,2)); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(2); printNix(random(0,2)); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(3); printNix(random(0,2)); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(4); printNix(random(0,2)); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(5); printNix(random(0,2)); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    selectDigit(6); printNix(random(0,2)); delay(delayAnim); selectDigit(0); delay(delayDisp);
+    timeEnd = millis();
   }
   selectDigit(0); // Clear display
   delay(250);
@@ -294,7 +296,7 @@ void printNix(int x) {
 }
 
 // Behaves like Serial.printf()
-void printSerial(const char *format, ...) {
+void serialPrintf(const char *format, ...) {
     char buffer[512];
     va_list args;
     va_start(args, format);
@@ -353,23 +355,45 @@ void loop() {
   T_S2 = Second % 10;
   T_S1 = Second / 10 % 10;
 
-  if (DEBUG) { printSerial("%d%d:%d%d:%d%d\n", T_H1, T_H2, T_M1, T_M2, T_S1, T_S2); }
+  if (DEBUG) { serialPrintf("%d%d:%d%d:%d%d\n", T_H1, T_H2, T_M1, T_M2, T_S1, T_S2); }
 
-  selectDigit(1); printNix(T_H1); delay(dispDelay);
-  selectDigit(2); printNix(T_H2); delay(dispDelay);
-  selectDigit(3); printNix(T_M1); delay(dispDelay);
-  selectDigit(4); printNix(T_M2); delay(dispDelay);
-  selectDigit(5); printNix(T_S1); delay(dispDelay);
-  selectDigit(6); printNix(T_S2); delay(dispDelay);
+  selectDigit(1); printNix(T_H1); delay(delayDisp);
+  selectDigit(2); printNix(T_H2); delay(delayDisp);
+  selectDigit(3); printNix(T_M1); delay(delayDisp);
+  selectDigit(4); printNix(T_M2); delay(delayDisp);
+  selectDigit(5); printNix(T_S1); delay(delayDisp);
+  selectDigit(6); printNix(T_S2); delay(delayDisp);
 
   if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
     // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-    switch(hourlyAnim) {
+    switch(animHourly) {
       case 0: break;
       case 1: animRandom(); break;
-      case 2: jukeboxAnim(animTime); break;
-      case 3: binaryAnim(animTime); break;
-      case 4: countdownAnim(animTime); break;
+      case 2: animJukebox(animTime); break;
+      case 3: animBinary(animTime); break;
+      case 4: animCountdown(animTime); break;
+      default: break;
+    }
+  }
+
+  if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) {
+    switch(animHalfHour) {
+      case 0: break;
+      case 1: animRandom(); break;
+      case 2: animJukebox(animTime); break;
+      case 3: animBinary(animTime); break;
+      case 4: animCountdown(animTime); break;
+      default: break;
+    }
+  }
+
+  if ((T_S1 == 0) && (T_S2 == 0)) {
+    switch(animMinute) {
+      case 0: break;
+      case 1: animRandom(); break;
+      case 2: animJukebox(animTime); break;
+      case 3: animBinary(animTime); break;
+      case 4: animCountdown(animTime); break;
       default: break;
     }
   }

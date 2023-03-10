@@ -23,9 +23,9 @@ const bool AMPM = 1;
 
 // Play a random animation at set times
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-const int animHourly = 1;
-const int animHalfHour = 0;
-const int animMinute = 0;
+const int animHourly = 1;   // 12:00:00
+const int animHalfHour = 0; // 12:30:00
+const int animMinute = 0;   // 12:31:00
 
 // Animation time in ms
 const int animTime = 2000;

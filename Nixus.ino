@@ -23,12 +23,12 @@ const bool AMPM = 1;
 
 // Play a random animation at set times
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-const int animHourly = 1;   // 12:00:00
+const int animHourly = 0;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
-const int animMinute = 0;   // 12:31:00
+const int animMinute = 1;   // 12:31:00
 
 // Animation time in ms
-const int animTime = 2000;
+const int animTime = 1000;
 
 // Global delay (brightness/flicker)
 const int delayDisp = 3;
@@ -133,9 +133,9 @@ void animCountdown(int y) {
   timeStart = millis();
   timeEnd = timeStart;
   while ((timeEnd - timeStart) <= y) {  
-    for (int digSel = 1; digSel <= 6; digSel++) {
+    for (int digSel = 0; digSel < 7; digSel++) {
       selectDigit(digSel);
-      for (int cDown = 9; cDown >= 0; cDown--) {
+      for (int cDown = 9; cDown > -1; cDown--) {
         printNix(cDown); delay(delayAnim);
         selectDigit(0); delay(delayDisp);
       }

@@ -62,16 +62,11 @@ const int Digit4 = 6;
 const int Digit5 = 7;
 const int Digit6 = 8;
 
-<<<<<<< HEAD
-unsigned long starttime;   // Useful for timers
-unsigned long endtime;
 unsigned long adjMillis;
 unsigned long prevMillis = 0;
 unsigned long adjTime = 500;    // adjust speed (lower = faster repeat while button held)
-=======
 unsigned long timeStart;   // Useful for timers
 unsigned long timeEnd;
->>>>>>> moreanims
 
 void setup() {
   if (DEBUG) {

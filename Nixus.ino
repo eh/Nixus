@@ -131,6 +131,7 @@ void animRandom(int rTime) {
 }
 
 // Count down from 9 to 0, left-to-right, for y ms
+// (cycle length: 360ms)
 void animCountdown(int y) {
   if (DEBUG) { Serial.print("Countdown "); }
   timeStart = millis();
@@ -139,7 +140,7 @@ void animCountdown(int y) {
     for (int digSel = 0; digSel <= 6; digSel++) {
       selectDigit(digSel);
       for (int cDown = 9; cDown >= 0; cDown--) {
-        printNix(cDown); delay(delayAnim);
+        printNix(cDown); delay(delayDisp);
         selectDigit(0); delay(delayDisp);
       }
     }
@@ -150,6 +151,7 @@ void animCountdown(int y) {
 }
 
 // Jukebox animation, cycle for y ms
+// (cycle length: 78ms)
 void animJukebox(int y) {
   if (DEBUG) {Serial.print("Jukebox "); }
   timeStart = millis();
@@ -174,6 +176,7 @@ void animJukebox(int y) {
 }
 
 // Random binary, cycle for y ms
+// (cycle length: 78ms)
 void animBinary(int y) {
   if (DEBUG) { Serial.print("Binary "); }
   timeStart = millis();

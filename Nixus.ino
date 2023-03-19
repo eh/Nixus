@@ -25,10 +25,14 @@ const bool AMPM = 1;
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
 const int animHourly = 0;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
-const int animMinute = 1;   // 12:31:00
+const int animMinute = 0;   // 12:31:00
+const int animSecond = 1;   // 12:31:01
 
 // Animation time in ms
 const int animTime = 1000;
+
+// This needs to be < animTime
+const int blipTime = 100;
 
 // Global delay (brightness/flicker)
 const int delayDisp = 3;
@@ -113,7 +117,6 @@ void setup() {
   if (DEBUG) { Serial.println("Clock running"); }
 
 }
-
 
 // Play a random animation
 void animRandom() {
@@ -341,8 +344,19 @@ void adjHour() {
   }
 }
 
-void loop() {
-  
+// "blip" every second
+void blipAnim(int y) {
+  switch(animSecond) {
+    case 0: break;
+    case 1: animRandom(); break;
+    case 2: animJukebox(blipTime); break;
+    case 3: animBinary(blipTime); break;
+    case 4: animCountdown(blipTime); break;
+    default: break;
+  }
+}
+
+void loop() {  
   if (digitalRead(buttonHours) == LOW) { adjHour(); }
   if (digitalRead(buttonMins) == LOW) { adjMinute(); }
 
@@ -405,7 +419,13 @@ void loop() {
     }
   }
 
-  // blink
-  if ((second() % 2) == 0) { digitalWrite(blinkLED, LOW); }
-  if ((second() % 2) != 0) { digitalWrite(blinkLED, HIGH); }
+  // Blink every other second
+  if ((second() % 2) == 0) {
+    digitalWrite(blinkLED, LOW);
+    blipAnim(blipTime);
+  }
+  if ((second() % 2) != 0) {
+    digitalWrite(blinkLED, HIGH);
+    blipAnim(blipTime);
+  }
 }

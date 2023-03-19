@@ -119,13 +119,13 @@ void setup() {
 }
 
 // Play a random animation
-void animRandom() {
+void animRandom(int rTime) {
   if (DEBUG) { Serial.println("Playing random animation"); }
   int y = random(1,4);
   switch(y) {
-    case 1: animJukebox(animTime); break;
-    case 2: animBinary(animTime); break;
-    case 3: animCountdown(animTime); break;
+    case 1: animJukebox(rTime); break;
+    case 2: animBinary(rTime); break;
+    case 3: animCountdown(rTime); break;
     default: break;
   }
 }
@@ -345,10 +345,10 @@ void adjHour() {
 }
 
 // "blip" every second
-void blipAnim(int y) {
+void blipAnim() {
   switch(animSecond) {
     case 0: break;
-    case 1: animRandom(); break;
+    case 1: animRandom(blipTime); break;
     case 2: animJukebox(blipTime); break;
     case 3: animBinary(blipTime); break;
     case 4: animCountdown(blipTime); break;
@@ -389,7 +389,7 @@ void loop() {
     // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
     switch(animHourly) {
       case 0: break;
-      case 1: animRandom(); break;
+      case 1: animRandom(animTime); break;
       case 2: animJukebox(animTime); break;
       case 3: animBinary(animTime); break;
       case 4: animCountdown(animTime); break;
@@ -400,7 +400,7 @@ void loop() {
   if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) {
     switch(animHalfHour) {
       case 0: break;
-      case 1: animRandom(); break;
+      case 1: animRandom(animTime); break;
       case 2: animJukebox(animTime); break;
       case 3: animBinary(animTime); break;
       case 4: animCountdown(animTime); break;
@@ -411,7 +411,7 @@ void loop() {
   if ((T_S1 == 0) && (T_S2 == 0)) {
     switch(animMinute) {
       case 0: break;
-      case 1: animRandom(); break;
+      case 1: animRandom(animTime); break;
       case 2: animJukebox(animTime); break;
       case 3: animBinary(animTime); break;
       case 4: animCountdown(animTime); break;
@@ -422,10 +422,10 @@ void loop() {
   // Blink every other second
   if ((second() % 2) == 0) {
     digitalWrite(blinkLED, LOW);
-    blipAnim(blipTime);
+    blipAnim();
   }
   if ((second() % 2) != 0) {
     digitalWrite(blinkLED, HIGH);
-    blipAnim(blipTime);
+    blipAnim();
   }
 }

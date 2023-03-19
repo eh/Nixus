@@ -136,9 +136,9 @@ void animCountdown(int y) {
   timeStart = millis();
   timeEnd = timeStart;
   while ((timeEnd - timeStart) <= y) {
-    for (int digSel = 0; digSel < 7; digSel++) {
+    for (int digSel = 0; digSel <= 6; digSel++) {
       selectDigit(digSel);
-      for (int cDown = 9; cDown > -1; cDown--) {
+      for (int cDown = 9; cDown >= 0; cDown--) {
         printNix(cDown); delay(delayAnim);
         selectDigit(0); delay(delayDisp);
       }

@@ -2,7 +2,7 @@
    SIX DIGIT NIXIE CLOCK WITH RTC by DOMINIC BUMBACA
    Dominic@Bumbaca.com
    cut and paste this into your Arduino IDE anf you should be good to go.
-	
+
 	Use an ATMEGA328 and make sure the below tow libraries are available..good luck.
         the jukebox section was for the bulbs to flicker rapidly and randomly for a few seconds every hour, the intent is to prevent cathode poisoning.
         since this is multiplexed I dont think this is necessary.I have included the loop anyway in case you need an example.
@@ -11,7 +11,7 @@
 /*
   Switch to DS3232 library, general clean-up, additional features.
   todo: ext 12/24hr, ext brightness, ext blink toggle, better debounce
-  blink type (off, 1x1sec, 2x1sec, heartbeat, ?) 
+  blink type (off, 1x1sec, 2x1sec, heartbeat, ?)
   available gpio: 2, 3, 17, 18
 */
 
@@ -80,7 +80,7 @@ void setup() {
   }
 
   // Start RTC sync
-  NixRTC.begin();  
+  NixRTC.begin();
   setSyncProvider(NixRTC.get);
   if (timeStatus() != timeSet) {
     if (DEBUG) { Serial.println("RTC Sync failure"); }
@@ -135,7 +135,7 @@ void animCountdown(int y) {
   if (DEBUG) { Serial.print("Countdown "); }
   timeStart = millis();
   timeEnd = timeStart;
-  while ((timeEnd - timeStart) <= y) {  
+  while ((timeEnd - timeStart) <= y) {
     for (int digSel = 0; digSel < 7; digSel++) {
       selectDigit(digSel);
       for (int cDown = 9; cDown > -1; cDown--) {
@@ -146,7 +146,7 @@ void animCountdown(int y) {
     timeEnd = millis();
   }
   selectDigit(0);  // Clear display
-  delay(250);  
+  delay(250);
 }
 
 // Jukebox animation, cycle for y ms
@@ -154,7 +154,7 @@ void animJukebox(int y) {
   if (DEBUG) {Serial.print("Jukebox "); }
   timeStart = millis();
   timeEnd = timeStart;
-  while ((timeEnd - timeStart) <= y) {  
+  while ((timeEnd - timeStart) <= y) {
     T_M2 = random(0,10); T_M1 = random(0,10);
     T_H2 = random(0,10); T_H1 = random(0,10);
     T_S2 = random(0,10); T_S1 = random(0,10);
@@ -356,7 +356,7 @@ void blipAnim() {
   }
 }
 
-void loop() {  
+void loop() {
   if (digitalRead(buttonHours) == LOW) { adjHour(); }
   if (digitalRead(buttonMins) == LOW) { adjMinute(); }
 
@@ -367,11 +367,11 @@ void loop() {
   }
   T_H2 = Hour % 10;
   T_H1 = Hour / 10 % 10;
-  
+
   Minute = minute();
   T_M2 = Minute % 10;
   T_M1 = Minute / 10 % 10;
-  
+
   Second = second();
   T_S2 = Second % 10;
   T_S1 = Second / 10 % 10;

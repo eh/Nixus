@@ -137,11 +137,10 @@ void animCountdown(int y) {
   timeStart = millis();
   timeEnd = timeStart;
   while ((timeEnd - timeStart) <= y) {
-    for (int digSel = 0; digSel <= 6; digSel++) {
+    for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
       for (int cDown = 9; cDown >= 0; cDown--) {
         printNix(cDown); delay(delayDisp);
-        selectDigit(0); delay(delayDisp);
       }
     }
     timeEnd = millis();

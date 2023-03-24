@@ -10,7 +10,7 @@
 
 /*
   Switch to DS3232 library, general clean-up, additional features.
-  todo: ext 12/24hr, ext brightness, ext blink toggle, better debounce
+  todo: ext 12/24hr, ext brightness, ext blink toggle
   blink type (off, 1x1sec, 2x1sec, heartbeat, ?)
   available gpio: 2, 3, 17, 18
 */
@@ -25,14 +25,11 @@ const bool AMPM = 1;
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
 const int animHourly = 0;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
-const int animMinute = 0;   // 12:31:00
-const int animSecond = 1;   // 12:31:01
+const int animMinute = 1;   // 12:31:00
+const int animSecond = 0;   // 12:31:01
 
 // Animation time in ms
 const int animTime = 1000;
-
-// This needs to be < animTime
-const int blipTime = 100;
 
 // Global delay (brightness/flicker)
 const int delayDisp = 3;
@@ -146,7 +143,7 @@ void animCountdown(int y) {
     timeEnd = millis();
   }
   selectDigit(0);  // Clear display
-  delay(250);
+  //delay(250);
 }
 
 // Jukebox animation, cycle for y ms
@@ -171,7 +168,7 @@ void animJukebox(int y) {
     timeEnd = millis();
   }
   selectDigit(0); // Clear display
-  delay(250);
+  //delay(250);
 }
 
 // Random binary, cycle for y ms
@@ -190,7 +187,7 @@ void animBinary(int y) {
     timeEnd = millis();
   }
   selectDigit(0); // Clear display
-  delay(250);
+  //delay(250);
 }
 
 // Select (enable) a digit 1-6, 0 = all off
@@ -346,18 +343,6 @@ void adjHour() {
   }
 }
 
-// "blip" every second
-void blipAnim() {
-  switch(animSecond) {
-    case 0: break;
-    case 1: animRandom(blipTime); break;
-    case 2: animJukebox(blipTime); break;
-    case 3: animBinary(blipTime); break;
-    case 4: animCountdown(blipTime); break;
-    default: break;
-  }
-}
-
 void loop() {
   if (digitalRead(buttonHours) == LOW) { adjHour(); }
   if (digitalRead(buttonMins) == LOW) { adjMinute(); }
@@ -378,6 +363,7 @@ void loop() {
   T_S2 = Second % 10;
   T_S1 = Second / 10 % 10;
 
+  // Print time to serial if DEBUG enabled
   if (DEBUG) { serialPrintf("%d%d:%d%d:%d%d\n", T_H1, T_H2, T_M1, T_M2, T_S1, T_S2); }
 
   selectDigit(1); printNix(T_H1); delay(delayDisp);
@@ -424,10 +410,8 @@ void loop() {
   // Blink every other second
   if ((second() % 2) == 0) {
     digitalWrite(blinkLED, LOW);
-    blipAnim();
   }
   if ((second() % 2) != 0) {
     digitalWrite(blinkLED, HIGH);
-    blipAnim();
   }
 }

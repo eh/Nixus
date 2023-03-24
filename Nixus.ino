@@ -26,7 +26,6 @@ const bool AMPM = 1;
 const int animHourly = 0;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
 const int animMinute = 1;   // 12:31:00
-const int animSecond = 0;   // 12:31:01
 
 // Animation time in ms
 const int animTime = 1000;

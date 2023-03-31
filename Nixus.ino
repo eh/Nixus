@@ -13,6 +13,7 @@
   todo: ext 12/24hr, ext brightness, ext blink toggle
   blink type (off, 1x1sec, 2x1sec, heartbeat, ?)
   available gpio: 2, 3, 17, 18
+  set a flag at :59, clear on :00 if anim called?
 */
 
 // Enable for DEBUG info on serial
@@ -22,7 +23,7 @@ const bool DEBUG = 0;
 const bool AMPM = 1;
 
 // Play a random animation at set times
-// 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
+// 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown, 5 = sweep
 const int animHourly = 0;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
 const int animMinute = 1;   // 12:31:00
@@ -126,6 +127,42 @@ void animRandom(int rTime) {
   }
 }
 
+// Play a specific animation
+// 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown 5 = sweep
+void animDo(int aNum) {
+  switch(aNum) {
+    case 0: break;
+    case 1: animRandom(animTime); break;
+    case 2: animJukebox(animTime); break;
+    case 3: animBinary(animTime); break;
+    case 4: animCountdown(animTime); break;
+    case 5: animSweep(animTime); break;
+    default: break;
+  }
+}
+
+// Sweep back-and-forth for y ms
+// (cycle lenght: 120ms)
+void animSweep(int y) {
+  if (DEBUG) { Serial.print("Sweep "); }
+  timeStart = millis();
+  timeEnd = timeStart;
+  while ((timeEnd - timeStart) <= y) {
+    for (int digSel = 1; digSel <= 6; digSel++) {
+      selectDigit(digSel);
+      printNix(0);
+      delay(delayAnim);
+    }
+    for (int digSel = 6; digSel >= 0; digSel--) {
+      selectDigit(digSel);
+      printNix(0);
+      delay(delayAnim);
+    }
+    timeEnd = millis();
+  }
+  selectDigit(0);
+}
+
 // Count down from 9 to 0, left-to-right, for y ms
 // (cycle length: 360ms)
 void animCountdown(int y) {
@@ -142,7 +179,6 @@ void animCountdown(int y) {
     timeEnd = millis();
   }
   selectDigit(0);  // Clear display
-  //delay(250);
 }
 
 // Jukebox animation, cycle for y ms
@@ -167,7 +203,6 @@ void animJukebox(int y) {
     timeEnd = millis();
   }
   selectDigit(0); // Clear display
-  //delay(250);
 }
 
 // Random binary, cycle for y ms
@@ -186,7 +221,6 @@ void animBinary(int y) {
     timeEnd = millis();
   }
   selectDigit(0); // Clear display
-  //delay(250);
 }
 
 // Select (enable) a digit 1-6, 0 = all off
@@ -372,40 +406,9 @@ void loop() {
   selectDigit(5); printNix(T_S1); delay(delayDisp);
   selectDigit(6); printNix(T_S2); delay(delayDisp);
 
-  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
-    // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown
-    switch(animHourly) {
-      case 0: break;
-      case 1: animRandom(animTime); break;
-      case 2: animJukebox(animTime); break;
-      case 3: animBinary(animTime); break;
-      case 4: animCountdown(animTime); break;
-      default: break;
-    }
-  }
-
-  if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) {
-    switch(animHalfHour) {
-      case 0: break;
-      case 1: animRandom(animTime); break;
-      case 2: animJukebox(animTime); break;
-      case 3: animBinary(animTime); break;
-      case 4: animCountdown(animTime); break;
-      default: break;
-    }
-  }
-
-  // set a flag at :59, clear on :00 if anim called
-  if ((T_S1 == 0) && (T_S2 == 0)) {
-    switch(animMinute) {
-      case 0: break;
-      case 1: animRandom(animTime); break;
-      case 2: animJukebox(animTime); break;
-      case 3: animBinary(animTime); break;
-      case 4: animCountdown(animTime); break;
-      default: break;
-    }
-  }
+  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) { animDo(animHourly); }
+  if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) { animDo(animHalfHour); }
+  if ((T_S1 == 0) && (T_S2 == 0)) { animDo(animMinute); }
 
   // Blink every other second
   if ((second() % 2) == 0) {

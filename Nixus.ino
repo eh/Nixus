@@ -395,6 +395,7 @@ void loop() {
     }
   }
 
+  // set a flag at :59, clear on :00 if anim called
   if ((T_S1 == 0) && (T_S2 == 0)) {
     switch(animMinute) {
       case 0: break;

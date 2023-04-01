@@ -26,7 +26,7 @@ const bool AMPM = 1;
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown, 5 = sweep
 const int animHourly = 0;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
-const int animMinute = 1;   // 12:31:00
+const int animMinute = 5;   // 12:31:00
 
 // Animation time in ms
 const int animTime = 1000;
@@ -109,6 +109,7 @@ void setup() {
   animJukebox(animTime);
   animBinary(animTime);
   animCountdown(animTime);
+  animSweep(animTime);
   if (DEBUG) { Serial.println("Complete"); }
 
   if (DEBUG) { Serial.println("Clock running"); }
@@ -151,12 +152,12 @@ void animSweep(int y) {
     for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
       printNix(0);
-      delay(delayAnim);
+      delay(40);
     }
     for (int digSel = 6; digSel >= 0; digSel--) {
       selectDigit(digSel);
       printNix(0);
-      delay(delayAnim);
+      delay(40);
     }
     timeEnd = millis();
   }

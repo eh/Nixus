@@ -68,6 +68,7 @@ unsigned long prevMillis = 0;
 unsigned long adjTime = 500;    // adjust speed (lower = faster repeat while button held)
 unsigned long timeStart;   // Useful for timers
 unsigned long timeEnd;
+bool animComplete = 0;    // Help animations run for < 1 second
 
 void setup() {
   if (DEBUG) {
@@ -119,11 +120,12 @@ void setup() {
 // Play a random animation
 void animRandom(int rTime) {
   if (DEBUG) { Serial.println("Playing random animation"); }
-  int y = random(1,4);
+  int y = random(1,5);
   switch(y) {
     case 1: animJukebox(rTime); break;
     case 2: animBinary(rTime); break;
     case 3: animCountdown(rTime); break;
+    case 4: animSweep(rTime); break;
     default: break;
   }
 }
@@ -143,7 +145,7 @@ void animDo(int aNum) {
 }
 
 // Sweep back-and-forth for y ms
-// (cycle lenght: 120ms)
+// (cycle lenght: 480ms)
 void animSweep(int y) {
   if (DEBUG) { Serial.print("Sweep "); }
   timeStart = millis();
@@ -151,12 +153,12 @@ void animSweep(int y) {
   while ((timeEnd - timeStart) <= y) {
     for (int digSel = 1; digSel <= 6; digSel++) {
       selectDigit(digSel);
-      printNix(0);
+      printNix(random(0,10));
       delay(40);
     }
     for (int digSel = 6; digSel >= 0; digSel--) {
       selectDigit(digSel);
-      printNix(0);
+      printNix(random(0,10));
       delay(40);
     }
     timeEnd = millis();
@@ -335,6 +337,25 @@ void printNix(int x) {
   }
 }
 
+// Print a full 6 digits for y ms
+// This is currently unimplimented
+// The idea is you pass this 6 digits and some multiple of 6*delayDisp
+void fullPrint(int x, int y) {
+  if (DEBUG) { serialPrintf("Displaying: %d\n", x); }
+  timeStart = millis();
+  timeEnd = timeStart;
+  while ((timeEnd - timeStart) <= y) {
+    selectDigit(1); printNix(1); delay(delayDisp);
+    selectDigit(2); printNix(2); delay(delayDisp);
+    selectDigit(3); printNix(3); delay(delayDisp);
+    selectDigit(4); printNix(4); delay(delayDisp);
+    selectDigit(5); printNix(5); delay(delayDisp);
+    selectDigit(6); printNix(6); delay(delayDisp);
+    timeEnd = millis();
+  }
+  selectDigit(0); // Clear display
+}
+
 // Behaves like Serial.printf()
 void serialPrintf(const char *format, ...) {
     char buffer[512];
@@ -407,9 +428,25 @@ void loop() {
   selectDigit(5); printNix(T_S1); delay(delayDisp);
   selectDigit(6); printNix(T_S2); delay(delayDisp);
 
-  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) { animDo(animHourly); }
-  if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) { animDo(animHalfHour); }
-  if ((T_S1 == 0) && (T_S2 == 0)) { animDo(animMinute); }
+  if ((T_S1 == 5) && (T_S2 == 9)) { animComplete = 0; }
+  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
+    if (!animComplete) {
+      animDo(animHourly);
+      animComplete = 1;
+    }
+  }
+  if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) {
+    if (!animComplete) {
+      animDo(animHalfHour);
+      animComplete = 1;
+    }
+  }
+  if ((T_S1 == 0) && (T_S2 == 0)) {
+    if (!animComplete) {
+     animDo(animMinute);
+     animComplete = 1;
+    }
+  }
 
   // Blink every other second
   if ((second() % 2) == 0) {

@@ -24,9 +24,9 @@ const bool AMPM = 1;
 
 // Play a random animation at set times
 // 0 = off, 1 = random, 2 = jukebox, 3 = binary, 4 = countdown, 5 = sweep
-const int animHourly = 0;   // 12:00:00
+const int animHourly = 1;   // 12:00:00
 const int animHalfHour = 0; // 12:30:00
-const int animMinute = 5;   // 12:31:00
+const int animMinute = 1;   // 12:31:00
 
 // Animation time in ms
 const int animTime = 1000;
@@ -80,6 +80,7 @@ void setup() {
   // Start RTC sync
   NixRTC.begin();
   setSyncProvider(NixRTC.get);
+  setSyncInterval(3600);
   if (timeStatus() != timeSet) {
     if (DEBUG) { Serial.println("RTC Sync failure"); }
   } else {
@@ -117,7 +118,7 @@ void setup() {
 
 }
 
-// Play a random animation
+// Play a random animation for rTime ms
 void animRandom(int rTime) {
   if (DEBUG) { Serial.println("Playing random animation"); }
   int y = random(1,5);
@@ -428,23 +429,29 @@ void loop() {
   selectDigit(5); printNix(T_S1); delay(delayDisp);
   selectDigit(6); printNix(T_S2); delay(delayDisp);
 
-  if ((T_S1 == 5) && (T_S2 == 9)) { animComplete = 0; }
-  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {
-    if (!animComplete) {
-      animDo(animHourly);
-      animComplete = 1;
+  if ((T_S1 == 5) && (T_S2 == 9)) { animComplete = 0; }               // setup for anim
+  if ((T_M1 == 0) && (T_M2 == 0) && (T_S1 == 0) && (T_S2 == 0)) {     // time is xx:00:00
+    if (!animComplete) {     // if an animation hasn't played yet
+      if (animHourly) {      //   we want an animation (0 = no)
+        animDo(animHourly);  //   run the animation
+        animComplete = 1;    //   we've run an animation
+      }
     }
   }
   if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) {
     if (!animComplete) {
-      animDo(animHalfHour);
-      animComplete = 1;
+      if (animHalfHour) {
+        animDo(animHalfHour);
+        animComplete = 1;
+      }
     }
   }
   if ((T_S1 == 0) && (T_S2 == 0)) {
     if (!animComplete) {
-     animDo(animMinute);
-     animComplete = 1;
+      if (animMinute) {
+         animDo(animMinute);
+         animComplete = 1;
+      }
     }
   }
 

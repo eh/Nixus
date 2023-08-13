@@ -13,7 +13,6 @@
   todo: ext 12/24hr, ext brightness, ext blink toggle
   blink type (off, 1x1sec, 2x1sec, heartbeat, ?)
   available gpio: 2, 3, 17, 18
-  set a flag at :59, clear on :00 if anim called?
 */
 
 // Enable for DEBUG info on serial
@@ -437,6 +436,7 @@ void loop() {
         animComplete = 1;    //   we've run an animation
       }
     }
+    now();  // Try to combat drift in cheaper DS3231 module
   }
   if ((T_M1 == 3) && (T_M2) == 0 && (T_S1 == 0) && (T_S2 == 0)) {
     if (!animComplete) {
